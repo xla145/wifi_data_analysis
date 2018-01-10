@@ -1,0 +1,170 @@
+<#include "../../_layout/_layout2.0.html"><#t>
+<@header/>
+<div style="margin: 15px" id="form-save">
+	<form class="layui-form layui-form-pane">
+		<div class="layui-form-item">
+			<label class="layui-form-label"><span>*</span>活动标题：</label>
+			<div class="layui-input-block">
+				<input type="text" name="title" autocomplete="off" class="layui-input" value="${data.title!''}" readonly>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"><span>*</span>地点：</label>
+			<div class="layui-input-block">
+				<input type="text" name="address"  autocomplete="off" class="layui-input" value="${data.address!''}" readonly>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"><span>*</span>票价：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="price" autocomplete="off" class="layui-input" value="${data.price?string('#.##')}" readonly>
+			</div>
+			<label class="layui-form-label">活动时间：</label>
+			<div class="layui-input-inline">
+				<#if data.activityStartTime??>
+					<input type="text" name="activityStartTime" placeholder="开始时间"  value="${data.activityStartTime?string('yyyy-MM-dd HH:mm:ss')}" autocomplete="off" class="layui-input" readonly>
+					<#else>
+						<input type="text" name="activityStartTime" placeholder="开始时间"  autocomplete="off" class="layui-input">
+				</#if>
+			</div>
+			<div class="layui-form-mid layui-word-aux">(不填活动开始时间则默认是创建时间)</div>
+			<div class="layui-input-inline">
+				<#if data.activityEndTime??>
+					<input type="text" name="activityEndTime" placeholder="结束时间" lay-verify="required" value="${data.activityEndTime?string('yyyy-MM-dd HH:mm:ss')}" autocomplete="off" class="layui-input" readonly>
+					<#else>
+						<input type="text" name="activityEndTime" placeholder="结束时间" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+				</#if>
+			</div>
+			<div class="layui-form-mid layui-word-aux"><span style="color: red;">*</span></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"><span>*</span>活动类型：</label>
+			<div class="layui-input-inline">
+				<select name="activityType" readonly="readonly">
+					<option value="">请选择</option>
+					<option value="1" <#if data.activityType?? && data.activityType == 1>selected</#if>>会员活动</option>
+					<option value="2" <#if data.activityType?? && data.activityType == 2>selected</#if>>健康沙龙</option>
+					<option value="3" <#if data.activityType?? && data.activityType == 3>selected</#if>>健康运动</option>
+				</select>
+			</div>
+			<label class="layui-form-label" style="width: 120px;">报名截止时间：</label>
+			<div class="layui-input-inline">
+				<#if data.applyStartTime??>
+					<input type="text" name="applyStartTime" placeholder="开始时间" lay-verify="required" value="${data.applyStartTime?string('yyyy-MM-dd HH:mm:ss')}" autocomplete="off" class="layui-input" readonly>
+					<#else>
+						<input type="text" name="applyStartTime" placeholder="开始时间" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+				</#if>
+			</div>
+			<div class="layui-form-mid layui-word-aux"><span style="color: red;">*</span></div>
+			<div class="layui-input-inline">
+				<#if data.applyEndTime??>
+					<input type="text" name="applyEndTime" placeholder="结束时间" value="${data.applyEndTime?string('yyyy-MM-dd HH:mm:ss')}" autocomplete="off" class="layui-input" readonly>
+					<#else>
+						<input type="text" name="applyEndTime" placeholder="结束时间"  autocomplete="off" class="layui-input" readonly>
+				</#if>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"><span>*</span>合作商家：</label>
+			<div class="layui-input-inline">
+				<select name="supplierId" readonly="readonly">
+					<option value="">请选择</option>
+					<@module name="option" class="com.wzxy.label.impl.GetSupplierNode" type="1" checked="${data.supplierId!''}"/>
+				</select>
+			</div>
+			<label class="layui-form-label" style="width: 130px;"><span>*</span>报名人数上限：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="stock" autocomplete="off" class="layui-input" lay-verify="required" value="${data.stock!''}" readonly>
+			</div>
+			<label class="layui-form-label" style="width: 120px;">免费邀请人数：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="carryNumber" autocomplete="off" class="layui-input" value="${data.carryNumber!0}" readonly>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"><span>*</span>产品权重：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="weight" placeholder="请输入产品权重越大越靠前" autocomplete="off" class="layui-input" value="${data.weight!''}"  readonly>
+			</div>
+			<div class="layui-form-mid layui-word-aux">(权重越大活动排名越靠前)</div>
+			<label class="layui-form-label">浏览人数：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="browse" autocomplete="off" class="layui-input" value="${data.browse!''}" readonly>
+			</div>
+			<label class="layui-form-label">想去人数：</label>
+			<div class="layui-input-inline">
+				<input type="number" name="wantNumber" autocomplete="off" class="layui-input" value="${data.wantNumber!''}" readonly>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<fieldset class="layui-elem-field layui-field-title">
+				<legend><span style="color: red;">*</span>上传封面图片：</legend>
+			</fieldset>
+			<div class="layui-input-inline">
+				<div class="layui-upload-drag">
+					<#if data.imageUrl??>
+						<input type='hidden' name='imageUrl' value="${data.imageUrl!''}"> <img width='200' src="${data.imageUrl!''}">
+					</#if>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<fieldset class="layui-elem-field layui-field-title">
+				<legend><span style="color: red;">*</span>上传轮播图片：</legend>
+			</fieldset>
+			<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+				预览图：
+				<div class="layui-upload-list" id="img-list">
+					<#if data.imageList??>
+					<#list data.imageList as img>
+						<div class="layui-img-item">
+							<img src="${img.url!''}" alt="img" class="layui-upload-img">
+							<input type='hidden' value="${img.url!''}">
+							<div class="layui-fun-list">
+								<span class="del-img"><i class='layui-icon'>&#xe640;</i></span>
+							</div>
+						</div>
+					</#list>
+					</#if>
+				</div>
+			</blockquote>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">活动详情：</label>
+			<div class="layui-input-block product-info">
+				<input type="hidden" name ="info" id="info"></input>
+				<div id="activity-info">${data.info!''}</div>
+			</div>
+		</div>
+	</form>
+</div>
+<@footer>
+
+<script>
+	//入口
+	layui.use(['upload','form'], function() {
+		var $ = layui.jquery;
+		var form = layui.form,upload = layui.upload;
+        //初始化一个编辑器
+        var activityInfoIndex = new Editor().init({
+            editorEm: $('#activity-info'),	//产品介绍
+            minHeight: 250
+
+        })
+	});
+</script>
+</@footer>
+<style type="text/css">
+	.layui-elem-field legend {
+		margin-left: 20px;
+		padding: 0 10px;
+		font-size: 12px;
+		font-weight: 500;
+	}
+	.layui-form-item.layui-fixed {
+		margin-top: 20px;
+		position: fixed;
+		right: 20px;
+		bottom: 0px;
+	}
+</style>

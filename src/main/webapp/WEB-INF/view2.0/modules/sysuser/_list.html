@@ -1,0 +1,24 @@
+<#if dataList??>
+	<#list dataList as list>
+		<tr>
+		    <td><input type="checkbox" class="data-ckx" lay-skin="primary" data="${list.uid}"></td>
+			<td>${list.uid!''}</td>
+			<td>${list.name!''}</td>
+		    <td>${list.realName!''}</td>
+		    <td>${list.mobile!''}</td>
+		    <td>${list.qq!''}</td>
+		    <td>${list.email!''}</td>
+		    <td>${list.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+		    <td>${list.lastLoginTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+		    <td>
+				<#if list.isValid == 0>无效</#if>
+				<#if list.isValid == 1>有效</#if>
+			</td>
+		    <td>
+		    	<input type="hidden" class="index-id" value="${list.uid}">
+				<a href="javascript:void(0)" class="layui-btn operate layui-btn-normal layui-btn-mini" data-fn="auth">赋权</a>
+				<a href="javascript:void(0)" class="layui-btn operate layui-btn-mini" data-fn="edit">编辑</a>
+		 	</td>
+		</tr>
+	</#list>
+</#if>

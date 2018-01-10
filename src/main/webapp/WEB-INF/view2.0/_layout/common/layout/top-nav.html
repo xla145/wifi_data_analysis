@@ -1,0 +1,24 @@
+<div class="layui-header header">
+	<div class="layui-main">
+		<div class="logo">
+			<a href="${ctx}index.html">
+				<img src="${assets}/images/logo.png">
+			</a>
+		</div>
+		<div class="side-menu-switch posb" id="toggle"><span class="switch"  ara-hidden="true"></span></div>
+		<ul class="layui-nav admin-header-item">
+			<li class="layui-nav-item">
+				<a href="javascript:;" class="admin-header-user">
+					<img src="${assets}test/0.jpg" />
+					<span><@sysUser/></span>
+				</a>
+				<dl class="layui-nav-child">
+					<dd><a href="javascript:void(0);" class="operator-btn" data-type="userInfo" data-url="${ctx}sysuser/getUserInfo"> 个人信息</a></dd>
+					<dd><a href="javascript:void(0);" class="operator-btn" data-type="clearCache"><i class="fa fa-clear-cache" aria-hidden="true"></i> 清除缓存</a></dd>
+					<dd><a href="javascript:void(0);" class="operator-btn" data-type="loginOut"><i class="fa fa-sign-out" aria-hidden="true"></i> 退出登录</a></dd>
+
+				</dl>
+			</li>
+		</ul>
+	</div>
+</div>

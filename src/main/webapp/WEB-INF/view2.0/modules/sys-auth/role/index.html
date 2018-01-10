@@ -1,0 +1,136 @@
+<#include "../../../_layout/_layout2.0.html"><#t>
+<@header/>
+<div class="admin-main">
+	<!-- 按钮组 -->
+	<blockquote class="layui-elem-quote">
+		<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="add"><i class="layui-icon">&#xe654;</i> 添加</a>
+		<a href="javascript:void(0)" class="layui-btn layui-btn-small layui-btn-normal operator-btn" data-type="edit"><i class="layui-icon">&#xe642;</i> 编辑</a>
+	</blockquote>
+	<!-- 筛选组 -->
+	<blockquote class="layui-elem-quote filter-bar">
+		<form class="layui-form" id="filterForm">
+			<div class="layui-inline">
+				<label class="layui-filtrate-title">角色名称：</label>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input" id="release-time" name="name" style="width: 250px;">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="search"><i class="layui-icon">&#xe615;</i>搜索</a>
+				<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="reset"><i class="layui-icon">&#x1002;</i>重置</a>
+			</div>
+		</form>
+	</blockquote>
+	<!-- 表格区域 -->
+	<table class="layui-table" id="table-travel" lay-filter="table-list"></table>
+	<script type="text/html" id="barDemo">
+		<a class='layui-btn layui-btn-mini layui-btn-normal' lay-event='edit'>编辑</a>
+		<a class='layui-btn layui-btn-danger layui-btn-mini' lay-event='del'>删除</a>
+	</script>
+</div>
+<@footer>
+<script>
+	//入口
+	layui.use(['form','table','common'], function(){
+		var $ = layui.jquery;
+		var table = layui.table,
+			common = layui.common;
+		var tableIns = table.render({ //其它参数在此省略
+			id: 'table-list',
+			elem: '#table-travel',
+			url: '${ctx}sysRole/list',
+			request: {
+				pageName: 'pageNo' //页码的参数名称，默认：page
+				,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+			},
+			method: 'post',
+			cols: [[
+				{checkbox: true, fixed: true}
+				,{field:'name', title: '角色名称', width:150, sort: true, fixed: true}
+				,{field:'describe', title: '角色描述', width:150}
+				,{fixed: 'right', width:200, align:'left', toolbar: '#barDemo'}
+			]],
+			height: 'full-140',
+			size: 'sm',
+			even: true,
+			page: true,
+			limits: [30,60,90,150,300]
+			,limit: 30 //默认采用30
+		});
+		// 编辑 删除
+		var $ = layui.$, active = {
+			search: function () {
+				dataReload();
+			},
+			reset: function () {
+				$('#filterForm')[0].reset();
+				dataReload();
+			},
+			add: function () {
+				common.layerShowIframe("getView","添加旅游产品",false);
+			},
+			edit: function () {
+				var checkStatus = table.checkStatus('table-list')
+					,data = checkStatus.data;
+				if(data.length != 1){
+					layer.msg("请选择一条数据进行编辑！");
+					return;
+				}
+				edit(data[0].pid);
+			}
+		}
+		table.on('tool(table-list)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event; //获得 lay-event 对应的值
+			var tr = obj.tr; //获得当前行 tr 的DOM对象
+			if(layEvent === 'del'){ //删除
+				layer.confirm('真的删除行么', function(index){
+					obj.del(); //删除对应行（tr）的DOM结构
+					layer.close(index);
+					del(data.pid);
+				});
+			} else if(layEvent === 'edit'){ //编辑
+				edit(data.pid)
+			}
+		});
+		//加载数据
+		var dataReload = function () {
+			tableIns.reload({
+				where: common.formatForm($('#filterForm'))
+			});
+		}
+		//编辑
+		var edit = function (pid) {
+			if (!pid){
+				layer.msg("请选择一条数据进行编辑！")
+			}
+			common.layerShowIframe("getView?pid="+pid,"修改旅游产品信息",true)
+		}
+		//删除
+		var del = function (pid) {
+			common.post("del",{ids: pid},function (result) {
+				if (result.code != 0) {
+					layer.msg(result.msg)
+					return;
+				}
+				dataReload();
+			})
+		}
+		//上下架
+		var upOrDownProduct = function (pid,status) {
+			common.post("upOrDownProduct",{ids: pid, status: status},function (result) {
+				if (result.code != 0) {
+					layer.msg(result.msg);
+					return;
+				}
+				dataReload();
+			})
+		}
+		//绑定操作按钮
+		$('.operator-btn').on('click', function(){
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+	});
+</script>
+</@footer>

@@ -1,0 +1,76 @@
+<#include "../../../_layout/_layout2.0.html"><#t>
+	<@header/>
+<div id="edit-form">
+	<blockquote class="site-text site-title layui-elem-quote">用户信息：</blockquote>
+	<div class="member-option-main">
+		<form class="layui-form layui-form-pane">
+			<input type="hidden" class="layui-input" value="${data.uid!''}" id="uid">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">uid:</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" value="${data.uid!''}" readonly>
+					</div>
+				</div>
+				<div class="avatar-show layui-inline">
+					<label class="layui-form-label">用户头像:</label>
+					<div class="layui-avatar">
+						<img src="${data.avatar!'${assets}test/1.png'}" width="80px" class="operator-btn" data-type="editImg">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">手机号:</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" value="普通会员"  value="${data.mobile!''}" readonly >
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">注册时间：</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" value="${data.createTime?string('yyyy-MM-dd HH:mm:ss')}" readonly>
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-block layui-form-text">
+					<label class="layui-form-label">内容：</label>
+					<textarea class="layui-textarea" readonly>${data.feedback!''}</textarea>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<@footer>
+<script>
+	//入口
+	layui.use(['layer','form','common','laydate'], function() {
+			var table = layui.table, layer = layui.layer, form = layui.form, common = layui.common,
+				laydate = layui.laydate;
+			laydate.render({elem: '#create-time', type: 'datetime', range: true});
+	});
+</script>
+</@footer>
+<style type="text/css">
+	.member-option-main {
+		position: relative;
+	}
+	.avatar-show {
+		position: absolute;
+		top:0px;
+		left: 322px;
+	}
+	.layui-avatar {
+		margin-left: 125px;
+		width: 80px;
+		height: 80px;
+		border-radius: 80px;
+		overflow: hidden;
+	}
+	.layui-edit-avatar{
+		line-height: 60px;
+	}
+</style>

@@ -1,0 +1,203 @@
+<#include "../../_layout/_layout2.0.html"><#t>
+<@header/>
+<div id="edit-form" style="margin:10px;">
+	<blockquote class="site-text site-title layui-elem-quote">用户信息：</blockquote>
+	<div class="member-main">
+		<div class="member-message">
+			<form class="layui-form layui-form-pane">
+				<input type="hidden" class="layui-input" value="${data.uid!''}" id="uid">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">昵称:</label>
+						<div class="layui-input-inline">
+							<input type="text" class="layui-input" value="${data.nickname!''}" readonly>
+						</div>
+					</div>
+					<div class="avatar-show layui-inline">
+						<label class="layui-form-label">用户头像:</label>
+						<div class="layui-avatar">
+							<img src="${data.avatar!'${assets}test/1.png'}" width="80px" class="operator-btn" data-type="editImg">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">性别:</label>
+						<div class="layui-input-block">
+							<input type="radio" value="男" name="sex" title="男" <#if data.sex??&&data.sex==1>checked=""</#if>>
+							<input type="radio" value="女" name="sex" title="女" <#if data.sex??&&data.sex==2>checked=""</#if>>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">会员等级:</label>
+						<div class="layui-input-inline">
+							<input type="text" class="layui-input" value="普通会员" readonly>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">注册时间：</label>
+						<div class="layui-input-inline">
+							<input type="text" class="layui-input" value="${data.createTime?string('yyyy-MM-dd HH:mm:ss')}" readonly>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<blockquote class="site-text site-title layui-elem-quote">其他信息：</blockquote>
+	<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+			<li class="layui-this">优惠券信息</li>
+			<li>收货地址信息</li>
+		</ul>
+		<div class="layui-tab-content">
+			<div class="layui-tab-item layui-show">
+				<table id="member-coupon-table" lay-filter="member-table"></table>
+			</div>
+			<div class="layui-tab-item">
+				<table id="member-address-table" lay-filter="member-address-table"></table>
+			</div>
+		</div>
+	</div>
+</div>
+<@footer>
+	<script>
+        //入口
+        layui.use(['table','layer','form','element'], function(){
+            var table = layui.table, form = layui.form,element = layui.element;
+            //列表渲染
+            var memberCouponTable = table.render({
+                id: 'member-coupon-table',
+                elem: '#member-coupon-table'
+                ,url: '${ctx}member/couponList'
+				,where: {uid: $("#uid").val()}
+                ,page: true
+                ,method: 'post'
+                ,request: {
+                    pageName: 'pageNo' //页码的参数名称，默认：page
+                    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                }
+                ,limits: [15,30,60,90,120]
+                ,limit: 15 //默认采用30
+                ,size: 'sm'
+                ,cols: [[
+                    {checkbox: true, fixed: true}
+                    ,{fixed: true,field:'mcid', title: '用户优惠券编号', width:150}
+                    ,{fixed: true,field:'couponCid', title: '优惠券编号', width:150}
+                    ,{field:'couponName', title: '优惠券名字', width:150}
+                    ,{field:'couponType', title: '优惠券类型', width:100,templet: '#typeTpl'}
+                    ,{field:'validPeriod', title: '有效期', width:260}
+                    ,{field:'createTime', title: '发放时间', width:150,templet: '#timeTpl',}
+                    ,{field: 'source', title: '来源',width:100}
+                    ,{fixed: 'right',field:'status', title: '优惠券状态', width:150,templet: '#statusTpl'}
+                ]],
+            });
+            var active = {
+                editImg: function () {
+                    console.log($(this).html())
+                    var that= this;
+                    layer.confirm('你确定要设置为默认图片？', function(index){
+                        $.post("${ctx}member/editAvatar",{uid: $("#uid").val()},function (result) {
+							if (result.code == 0) {
+							   $(that).attr("src",result.msg);
+							   layer.close(index);
+							   return;
+							}
+							layer.msg(result.msg);
+                        })
+					})
+                }
+			}
+            var memberAddressTable = table.render({
+                id: 'member-address-table',
+                elem: '#member-address-table'
+                ,url: '${ctx}member/addressList'
+                ,where: {uid: $("#uid").val()}
+                ,page: false
+                ,method: 'post'
+                ,request: {
+                    pageName: 'pageNo' //页码的参数名称，默认：page
+                    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                }
+                ,limits: [15,30,60,90,120]
+                ,limit: 15 //默认采用30
+                ,size: 'sm'
+                ,cols: [[
+                    {field:'name', title: '收货人姓名', width:120}
+                    ,{field:'mobile', title: '手机号', width:150}
+                    ,{field:'town', title: '所在地区', width:150}
+                    ,{field:'addr', title: '详细地址', width:200}
+                ]]
+            });
+            //绑定操作按钮
+            $('.operator-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+	</script>
+</@footer>
+<script type="text/html" id="typeTpl">
+	{{# if(d.couponType === 1){ }}
+	{{ '活动劵' }}
+	{{# } }}
+	{{# if(d.couponType === 2){ }}
+	{{ '商品劵' }}
+	{{# } }}
+	{{# if(d.couponType === 3){ }}
+	{{ '旅游劵' }}
+	{{# } }}
+	{{# if(d.couponType === 99){ }}
+	{{ '通用劵' }}
+	{{# } }}
+</script>
+<script type="text/html" id="statusTpl">
+	{{# if(d.status === 0){ }}
+	{{ '<span style="color: red;">未使用</span>' }}
+	{{# } }}
+	{{# if(d.status === 10){ }}
+	{{ '<span style="color: green;">已使用</span>' }}
+	{{# } }}
+	{{# if(d.status === 15){ }}
+	{{ '<span style="color: red;">已过期</span>' }}
+	{{# } }}
+</script>
+<script type="text/html" id="timeTpl">
+	{{# var fn = function(time){
+	var newDate = new Date();
+	newDate.setTime(time);
+	return newDate.Format("yyyy-MM-dd hh:mm:ss");
+	}
+	}}
+	{{fn(d.createTime)}}
+</script>
+<style type="text/css">
+	.member-main {
+		height: 140px;
+	}
+	.layui-table-view {
+		position: relative;
+		margin: 0px 0;
+		overflow: hidden;
+	}
+	.member-main {
+		position: relative;
+	}
+	.avatar-show {
+		position: absolute;
+		top:0px;
+		left: 322px;
+	}
+	.layui-avatar {
+		margin-left: 125px;
+		width: 80px;
+		height: 80px;
+		border-radius: 80px;
+		overflow: hidden;
+	}
+	.layui-edit-avatar{
+		line-height: 60px;
+	}
+</style>

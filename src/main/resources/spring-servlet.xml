@@ -1,0 +1,143 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:websocket="http://www.springframework.org/schema/websocket"
+	   xsi:schemaLocation="http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+    <!-- 开启注解支持 -->
+	<mvc:annotation-driven />
+	
+ 	<!-- 事务支持 --> 
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+	<!-- 扫描bean资源 -->
+	<context:component-scan base-package="com.wzxy">
+   		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+   </context:component-scan>
+
+	<!-- 加载配置文件 -->
+	<context:property-placeholder location="classpath:resources.properties" />
+
+	<!-- 阿里 druid 数据库连接池 -->
+	<bean id = "dataSource" class = "com.alibaba.druid.pool.DruidDataSource" destroy-method = "close" >
+		<!-- 数据库基本信息配置 -->
+		<property name = "url" value = "${druid.connection.url}" />
+		<property name = "username" value = "${druid.connection.username}" />
+		<property name = "password" value = "${druid.connection.password}" />
+		<property name = "driverClassName" value = "${druid.connection.driverclass}" />
+		<property name = "filters" value = "${druid.connection.filters}" />
+		<property name = "maxActive" value = "${druid.connection.maxActive}" /><!-- 最大并发连接数 -->
+		<property name = "initialSize" value = "${druid.connection.initialSize}" /><!-- 初始化连接数量 -->
+		<property name = "maxWait" value = "${druid.connection.maxWait}" /><!-- 配置获取连接等待超时的时间 -->
+		<property name = "minIdle" value = "${druid.connection.minIdle}" /><!-- 最小空闲连接数 -->
+		<property name = "timeBetweenEvictionRunsMillis" value ="${druid.connection.timeBetweenEvictionRunsMillis}" /><!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name = "minEvictableIdleTimeMillis" value ="${druid.connection.minEvictableIdleTimeMillis}" /><!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name = "maxOpenPreparedStatements" value ="${druid.connection.maxOpenPreparedStatements}" />
+	</bean >
+
+	<!-- 注入数据源 到 DataSourceHolder -->
+	<bean id="dataSourceHolder" class="cn.assist.easydao.dao.datasource.DataSourceHolder">
+		<property name="dataSource" ref="dataSource" />
+		<property name="dev" value="${is.dev}" />
+	</bean>
+	
+	<!--&lt;!&ndash; cache 配置 &ndash;&gt;-->
+	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
+		<property name="servers">
+			<value>${memcache.ip}:${memcache.port}</value>
+		</property>
+		<property name="commandFactory">
+			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean>
+        </property>
+	</bean>
+
+	<bean name="cache" class="com.wzxy.base.cache.MCacheKit">
+		<constructor-arg type="net.rubyeye.xmemcached.MemcachedClient" ref="memcachedClient"/>
+	</bean>
+	<!---->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    	<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="springFactory" class="com.wzxy.base.helper.SpringFactory"/>
+	
+ 	<!-- 开启切面支持 -->
+ 	<aop:aspectj-autoproxy/>
+
+
+	<!-- 引入quartz 配置 	-->
+	<import resource="classpath:spring-quartz.xml"/>
+
+
+	<!-- websocket配置 -->
+	<bean id="SocketMessageHandle" class="com.wzxy.sorket.SocketMessageHandle" />
+	<websocket:handlers>
+		<!-- 配置消息处理bean和路径的映射关系 -->
+		<websocket:mapping path="/hello" handler="SocketMessageHandle"/>
+		<!-- 配置握手拦截器 -->
+		<websocket:handshake-interceptors>
+			<bean class="com.wzxy.filter.TestWebSocketHandleInterceptor"/>
+		</websocket:handshake-interceptors>
+		<!-- 开启sockjs，去掉则关闭sockjs -->
+		<!-- <websocket:sockjs /> -->
+	</websocket:handlers>
+	<!-- 配置websocket消息的最大缓冲区长度 -->
+
+	<bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+		<property name="maxTextMessageBufferSize" value="8192" />
+		<property name ="maxBinaryMessageBufferSize" value="8192" />
+	</bean>
+
+
+	<!--设置bean管理器,通过spring的applicationContext获取-->
+	<!--声明spring 获取Bean的管理器-->
+	<bean id="springQuartzBeanManager" class="com.github.quartzweb.manager.bean.SpringQuartzBeanManager">
+		<!--设置优先级-->
+		<property name="priority" value="10" />
+	</bean>
+
+	<!--声明bean管理器门面,必须使用getInstance()初始化实例-->
+	<bean id="quartzBeanManagerFacade" class="com.github.quartzweb.manager.bean.QuartzBeanManagerFacade"
+		  factory-method="getInstance">
+		<!--设置管理器,根据优先级排序-->
+		<property name="quartzBeanManagers">
+			<list>
+				<ref bean="springQuartzBeanManager"/>
+			</list>
+		</property>
+		<!--是否启用默认bean管理器,默认true-->
+		<property name="useDefaultQuartzBeanManager" value="false"/>
+	</bean>
+
+	<!-- Kaptcha验证码生成器 -->
+	<bean name="producer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">no</prop>
+						<prop key="kaptcha.textproducer.font.color">black</prop>
+						<prop key="kaptcha.textproducer.char.space">5</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>
