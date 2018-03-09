@@ -3,8 +3,8 @@
 <div class="admin-main">
 	<!-- 按钮组 -->
 	<blockquote class="layui-elem-quote">
-		<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="add"><i class="layui-icon">&#xe654;</i> 添加</a>
-		<a href="javascript:void(0)" class="layui-btn layui-btn-small layui-btn-normal operator-btn" data-type="edit"><i class="layui-icon">&#xe642;</i> 编辑</a>
+		<a href="javascript:void(0)" class="layui-btn layui-btn-sm operator-btn" data-type="add"><i class="layui-icon">&#xe654;</i> 添加</a>
+		<a href="javascript:void(0)" class="layui-btn layui-btn-sm layui-btn-normal operator-btn" data-type="edit"><i class="layui-icon">&#xe642;</i> 编辑</a>
 	</blockquote>
 	<!-- 筛选组 -->
 	<blockquote class="layui-elem-quote filter-bar">
@@ -16,16 +16,16 @@
 				</div>
 			</div>
 			<div class="layui-inline">
-				<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="search"><i class="layui-icon">&#xe615;</i>搜索</a>
-				<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="reset"><i class="layui-icon">&#x1002;</i>重置</a>
+				<a href="javascript:void(0)" class="layui-btn layui-btn-sm operator-btn" data-type="search"><i class="layui-icon">&#xe615;</i>搜索</a>
+				<a href="javascript:void(0)" class="layui-btn layui-btn-sm operator-btn" data-type="reset"><i class="layui-icon">&#x1002;</i>重置</a>
 			</div>
 		</form>
 	</blockquote>
 	<!-- 表格区域 -->
-	<table class="layui-table" id="table-travel" lay-filter="table-list"></table>
+	<table class="layui-table" id="table-role" lay-filter="table-role"></table>
 	<script type="text/html" id="barDemo">
-		<a class='layui-btn layui-btn-mini layui-btn-normal' lay-event='edit'>编辑</a>
-		<a class='layui-btn layui-btn-danger layui-btn-mini' lay-event='del'>删除</a>
+		<a class='layui-btn layui-btn-xs layui-btn-normal' lay-event='edit'>编辑</a>
+		<a class='layui-btn layui-btn-danger layui-btn-xs' lay-event='del'>删除</a>
 	</script>
 </div>
 <@footer>
@@ -34,10 +34,11 @@
 	layui.use(['form','table','common'], function(){
 		var $ = layui.jquery;
 		var table = layui.table,
+            form = layui.form,
 			common = layui.common;
 		var tableIns = table.render({ //其它参数在此省略
-			id: 'table-list',
-			elem: '#table-travel',
+			id: 'table-role',
+			elem: '#table-role',
 			url: '${ctx}sysRole/list',
 			request: {
 				pageName: 'pageNo' //页码的参数名称，默认：page
@@ -48,7 +49,7 @@
 				{checkbox: true, fixed: true}
 				,{field:'name', title: '角色名称', width:150, sort: true, fixed: true}
 				,{field:'describe', title: '角色描述', width:150}
-				,{fixed: 'right', width:200, align:'left', toolbar: '#barDemo'}
+				,{fixed: 'right', title: '操作',width:120, align:'left', toolbar: '#barDemo'}
 			]],
 			height: 'full-140',
 			size: 'sm',
@@ -67,70 +68,88 @@
 				dataReload();
 			},
 			add: function () {
-				common.layerShowIframe("getView","添加旅游产品",false);
+				common.editForm("${ctx}sysRole/getView","添加角色",300,250,function (index, layero) {
+                    var formEm = $(layero).find('iframe').contents().find("#add-role-form").find('form');
+                    if (!form.onVerify(formEm)) {
+                        return false;
+                    }
+                    $.post("${ctx}sysRole/add",formEm.serialize(),function(result){
+                        if(result.code == 0){
+                            layer.close(index)
+                            dataReload(true);
+                            return;
+                        }
+                        layer.msg(result.msg);
+                    });
+
+                },false);
 			},
-			edit: function () {
-				var checkStatus = table.checkStatus('table-list')
-					,data = checkStatus.data;
+			edit: function (data) {
+				data = data || table.checkStatus('table-list').data;
 				if(data.length != 1){
 					layer.msg("请选择一条数据进行编辑！");
 					return;
 				}
-				edit(data[0].pid);
-			}
+                common.editForm("${ctx}sysRole/getView?roleId="+data[0].id,"添加角色",300,250,function (index, layero) {
+                    var formEm = $(layero).find('iframe').contents().find("#add-role-form").find('form');
+                    if (!form.onVerify(formEm)) {
+                        return false;
+                    }
+                    $.post("${ctx}sysRole/edit",formEm.serialize(),function(result){
+                        if(result.code == 0){
+                            layer.close(index)
+                            dataReload(true);
+                            return;
+                        }
+                        layer.msg(result.msg);
+                    });
+
+                },false);
+			},
+            del: function (data) {
+                data = data || table.checkStatus('table-role').data
+                if(data.length < 1){
+                    layer.msg("请选择一条数据进行删除！");
+                    return;
+                }
+                let ids = new Array();
+                layui.each(data,function (index,value) {
+					ids.push(value.id);
+                })
+                layer.confirm('真的删除该角色吗？', function(index){
+                    layer.close(index);
+                    common.post("${ctx}sysRole/del",{roleIds: ids},function (result) {
+                        if (result.code != 0) {
+                            layer.msg(result.msg)
+                            return;
+                        }
+                        dataReload(true);
+                    })
+                });
+            }
 		}
-		table.on('tool(table-list)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
-			var data = obj.data; //获得当前行数据
-			var layEvent = obj.event; //获得 lay-event 对应的值
-			var tr = obj.tr; //获得当前行 tr 的DOM对象
-			if(layEvent === 'del'){ //删除
-				layer.confirm('真的删除行么', function(index){
-					obj.del(); //删除对应行（tr）的DOM结构
-					layer.close(index);
-					del(data.pid);
-				});
-			} else if(layEvent === 'edit'){ //编辑
-				edit(data.pid)
-			}
-		});
 		//加载数据
-		var dataReload = function () {
+		var dataReload = function (isEdit) {
+            if (isEdit) {
+                $(".layui-laypage-btn")[0].click();
+                return;
+            }
 			tableIns.reload({
-				where: common.formatForm($('#filterForm'))
+				where: common.formatForm($('#filterForm')),page: {
+					pageNo: 1 //重新从第 1 页开始
+                }
 			});
-		}
-		//编辑
-		var edit = function (pid) {
-			if (!pid){
-				layer.msg("请选择一条数据进行编辑！")
-			}
-			common.layerShowIframe("getView?pid="+pid,"修改旅游产品信息",true)
-		}
-		//删除
-		var del = function (pid) {
-			common.post("del",{ids: pid},function (result) {
-				if (result.code != 0) {
-					layer.msg(result.msg)
-					return;
-				}
-				dataReload();
-			})
-		}
-		//上下架
-		var upOrDownProduct = function (pid,status) {
-			common.post("upOrDownProduct",{ids: pid, status: status},function (result) {
-				if (result.code != 0) {
-					layer.msg(result.msg);
-					return;
-				}
-				dataReload();
-			})
 		}
 		//绑定操作按钮
 		$('.operator-btn').on('click', function(){
 			var type = $(this).data('type');
 			active[type] ? active[type].call(this) : '';
 		});
+        //监听工具条
+        table.on('tool(table-role)', function(obj){
+            var type = obj.event;
+            active[type] ? active[type].call(this, [obj.data]) : '';
+        });
 	});
 </script>
 </@footer>

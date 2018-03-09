@@ -1,0 +1,112 @@
+<#include "../../_layout/_layout2.0.html"><#t>
+<@header/>
+<div class="childrenBody">
+	<blockquote class="layui-elem-quote news_search">
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input type="text" value="" placeholder="请输入关键字" class="layui-input search_input">
+		    </div>
+		    <a class="layui-btn search_btn">查询</a>
+		</div>
+		<div class="layui-inline">
+			<a class="layui-btn layui-btn-normal usersAdd_btn">当日数据</a>
+		</div>
+		<div class="layui-inline">
+			<a class="layui-btn layui-btn-danger otherAns">与昨天数据对比</a>
+		</div>
+		<div class="layui-inline">
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+	</blockquote>
+	<div style="width: 1000px; height: 450px;margin-left: 50px;margin-top: 25px;" id="echartsMain">
+	  	
+	</div>
+</div>
+<@footer>
+<script type="text/javascript">
+    layui.use(['form','layer','jquery','laypage','echarts'],function(){
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : parent.layer,
+            laypage = layui.laypage,echarts = layui.echarts
+            $ = layui.jquery;
+
+        $(function () {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = echarts.init(document.getElementById('echartsMain'));
+                /*$.ajax({
+                    url:"../../../getGFByNowDay.do",
+                    type:"post",
+                    dataType:"json",
+                    success:function(data){
+                        barEchartsOption(myChart,data.body);
+                    },
+                    error:function(XMLHttpRequest, textStatus){
+                        console.log(XMLHttpRequest);  //XMLHttpRequest.responseText    XMLHttpRequest.status   XMLHttpRequest.readyState
+                        console.log(textStatus);
+                        return data.head;
+                    }
+
+            });*/
+
+                var optionBar = {
+                    title : {
+                        text: '2017-12-26日入店量',
+                        subtext: '2017-12-26日'
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['日入店量']
+                    },
+                    toolbox: {
+                        show : true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar','stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : ["00时","01时","02时","03时","04时","05时","06时","07时","08时","09时","10时","11时","12时","13时","14时","15时","16时","17时","18时","19时","20时","21时","22时","23时"]
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'日入店量',
+                            type:'bar',
+                            data:[483,438,427,418,412,424,416,679,546,617,736,637,897,671,800,654,683,916,816,706,620,610,628,664],
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'},
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name: '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                myChart.clear();	//清除数据
+                myChart.hideLoading();//隐藏载入
+                myChart.setOption(optionBar); // 为echarts对象加载数据
+
+
+            }
+        );
+    })
+</script>
+</@footer>

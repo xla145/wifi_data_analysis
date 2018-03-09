@@ -1,8 +1,8 @@
 package com.wzxy.base.constant;
 
-import com.logistics.base.utils.ConfigUtil;
-import com.logistics.base.utils.DateUtil;
 
+import com.wzxy.base.utils.ConfigUtil;
+import com.wzxy.base.utils.DateUtil;
 
 /**
  * 

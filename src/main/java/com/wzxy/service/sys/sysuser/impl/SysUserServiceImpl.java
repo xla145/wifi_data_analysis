@@ -4,6 +4,7 @@ import cn.assist.easydao.common.*;
 import cn.assist.easydao.dao.BaseDao;
 import cn.assist.easydao.pojo.PagePojo;
 import com.wzxy.base.cache.MCache;
+import com.wzxy.base.constant.SysUserConstant;
 import com.wzxy.base.utils.CommonUtil;
 import com.wzxy.base.utils.MD5;
 import com.wzxy.base.utils.RecordBean;

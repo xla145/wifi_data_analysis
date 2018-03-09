@@ -1,0 +1,71 @@
+<#include "../../_layout/_layout2.0.html"><#t>
+<@header/>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="height:400px"></div>
+    <!-- ECharts单文件引入 -->
+<@footer>
+    <script type="text/javascript">
+        layui.use(['echarts' ],function(){
+            var echarts = layui.echarts;
+            // 基于准备好的dom，初始化echarts图表
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = echarts.init(document.getElementById('main'));
+
+            var option = {
+                title : {
+                    text: '2017年度入店量',
+                    subtext: '2017年'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['年入店量']
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar','stack', 'tiled']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月',]
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'年入店量',
+                        type:'bar',
+                        data:[624,450,550,650,570,780,820,490,580,690,490,530],
+                        markPoint : {
+                            data : [
+                                {type : 'max', name: '最大值'},
+                                {type : 'min', name: '最小值'}
+                            ]
+                        },
+                        markLine : {
+                            data : [
+                                {type : 'average', name: '平均值'}
+                            ]
+                        }
+                    }
+                ]
+            };
+            myChart.clear();	//清除数据
+            myChart.hideLoading();//隐藏载入
+            myChart.setOption(option);
+        });
+    </script>
+</@footer>

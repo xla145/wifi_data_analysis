@@ -24,6 +24,11 @@ Date.prototype.addTime = function (type,number) { //author: meizz
         var time  = this.getTime() + (number*24* 60 * 60 * 1000);
         return new Date(time);
     }
+    if (type == 2) {
+        var month  = this.getMonth()+number;
+        this.setMonth(month);
+        return this;
+    }
 }
 
 stampToDate = function (stamp) {
@@ -39,6 +44,30 @@ stampToDate = function (stamp) {
         dateArr.push(newDate.Format("yyyy-MM-dd"));
     }
     return dateArr.join(" , ");
+}
+
+dateFormat = function (time,format) {
+    format = format || "yyyy-MM-dd hh:mm:ss";
+    if (time == undefined || time == "") {
+        return "";
+    }
+    var date = new Date(time);
+
+    return date.Format(format)
+}
+isMark = function (time) {
+    var result = "";
+    if (time == undefined || time == "") {
+        return result;
+    }
+    var newDate = new Date();
+    time = new Date(time).getMonth();
+    var currentMonth = newDate.getMonth()
+    var nextMonth = newDate.addTime(2,1).getMonth();
+    if (time === currentMonth || time === nextMonth) {
+        result = time;
+    }
+    return result;
 }
 
 

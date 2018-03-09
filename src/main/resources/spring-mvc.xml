@@ -17,6 +17,7 @@
 
 	<!-- 映射静态资源  -->
 	<mvc:resources mapping="/resources2.0/**" location="/resources2.0/" />
+	<!-- 映射静态资源  -->
 
 	<!-- =========================freemarker VIEW定义 ========================= -->
 	<bean id="freeMarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">

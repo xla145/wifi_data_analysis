@@ -12,11 +12,22 @@ body {
 i.layui-icon {
     font-size: 16px;
 }
+.login_m {
+	width: 403px;
+	margin: 0 auto;
+	height: 375px;
+	margin-top: 98px;
+}
+.login_logo {
+	text-align: center;
+	margin-bottom: 15px;
+}
 .beg-login-box {
 	width: 450px;
 	height: 345px;
 	margin: 10% auto;
-	background-color: rgba(255, 255, 255, 0.407843);
+	/*background-color: rgba(255, 255, 255, 0.407843);*/
+	background: url(../images/login_m_bg.png) no-repeat; height:302px; overflow:hidden;
 	border-radius: 10px;
 	color: aliceblue;
 }
@@ -35,7 +46,7 @@ i.layui-icon {
 
 .beg-login-box .beg-login-main {
 	height: 195px;
-	padding: 30px 90px 0;
+	padding: 39px 100px 0px 63px;
 }
 
 .beg-login-main .layui-form-item {
@@ -104,4 +115,14 @@ i.layui-icon {
 	width: 156px;
 	float: left;
 	margin-right: 10px;
+}
+.beg-login-main img {
+	width: 100px;
+	height: 38px;
+}
+.layui-input {
+	height: 38px;
+	border: 1px solid #e6e6e6;
+	background-color: #fff;
+	border-radius: 2px;
 }

@@ -1,12 +1,10 @@
 package com.wzxy.job;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wzxy.base.constant.BaseConstant;
-import com.wzxy.sorket.SocketMessageHandle;
+import com.wzxy.sorket.handler.WebSocketEndPointTest;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 活动商品状态变更任务
@@ -19,15 +17,14 @@ public class StatisticsJob {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 
-	@Autowired
-	private SocketMessageHandle socketMessageHandle ;
+	WebSocketEndPointTest webSocketEndPointTest = new WebSocketEndPointTest();
+
 
 
 	protected void execute() throws JobExecutionException {
 		if(BaseConstant.isDev){
 			logger.info("============================>库存统计start...");
 		}
-		JSONObject json = new JSONObject();
-		socketMessageHandle.sendMessageToUsers(json.toJSONString());
+		webSocketEndPointTest.sendMsg("");
 	}
 }

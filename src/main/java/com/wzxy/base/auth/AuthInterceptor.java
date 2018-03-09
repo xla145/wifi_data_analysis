@@ -1,5 +1,6 @@
 package com.wzxy.base.auth;
 
+import com.wzxy.base.constant.BaseConstant;
 import com.wzxy.base.utils.JsonBean;
 import com.wzxy.service.auth.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;

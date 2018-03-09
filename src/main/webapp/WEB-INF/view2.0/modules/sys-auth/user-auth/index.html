@@ -1,10 +1,11 @@
-<#include "../../../_layout/_layout2.0.html"><#t> <@header/>
+<#include "../../../_layout/_layout2.0.html"><#t>
+<@header/>
 <div class="admin-main">
 	<blockquote class="layui-elem-quote quote-mini">
 		<input type="hidden" id="targetUid" value="${sysUser.uid!''}">
 		<span id="tipe"> 当前正在对 <span id="activeRole" class="font-bolder" style="color:#F00;">${sysUser.name!''}</span> 进行赋权操作，共赋予了<span class="font-bolder" style="color:#F00;" id="count">--</span>项权限</span>
 		<span class="item-right">
-			<a href="javascript:void(0);" id="authSave" class="layui-btn layui-btn-mini layui-btn-danger">保存修改项</a>
+			<a href="javascript:void(0);" id="authSave" class="layui-btn layui-btn-xs layui-btn-danger">保存修改项</a>
 		</span>
 	</blockquote>
 	<div class="chunk-wrap chunk-wrap-role">

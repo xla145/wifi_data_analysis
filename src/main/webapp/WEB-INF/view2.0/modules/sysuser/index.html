@@ -3,9 +3,9 @@
 <div class="admin-main">
 	<!-- 按钮组 -->
 	<blockquote class="layui-elem-quote">
-		<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="add"><i class="layui-icon">&#xe654;</i> 添加</a>
-		<a href="#" class="layui-btn layui-btn-small layui-btn-normal operator-btn" data-type="edit"><i class="layui-icon">&#xe642;</i> 编辑</a>
-		<!--<a href="#" class="layui-btn layui-btn-small layui-btn-danger" id="delete"><i class="layui-icon">&#xe640;</i> 删除信息</a>-->
+		<a href="javascript:void(0)" class="layui-btn layui-btn-sm operator-btn" data-type="add"><i class="layui-icon">&#xe654;</i> 添加</a>
+		<!--<a href="#" class="layui-btn layui-btn-sm layui-btn-normal operator-btn" data-type="edit"><i class="layui-icon">&#xe642;</i> 编辑</a>-->
+		<!--<a href="#" class="layui-btn layui-btn-sm layui-btn-danger" id="delete"><i class="layui-icon">&#xe640;</i> 删除信息</a>-->
 	</blockquote>
 	<!-- 筛选组 -->
 	<blockquote class="layui-elem-quote filter-bar">
@@ -51,16 +51,16 @@
 		      </div>
 		    </div>
 			<div class="layui-inline">
-				<a href="javascript:void(0)" class="layui-btn layui-btn-small operator-btn" data-type="search"><i class="layui-icon">&#xe615;</i>搜索</a>
-				<a href="javascript:void(0)" class="layui-btn layui-btn-small layui-btn-normal operator-btn" data-type="reset"><i class="layui-icon">&#x1002;</i>重置</a>
+				<a href="javascript:void(0)" class="layui-btn layui-btn-sm operator-btn" data-type="search"><i class="layui-icon">&#xe615;</i>搜索</a>
+				<a href="javascript:void(0)" class="layui-btn layui-btn-sm layui-btn-normal operator-btn" data-type="reset"><i class="layui-icon">&#x1002;</i>重置</a>
 			</div>
 		</form>
 	</blockquote>
 	<!-- 表格区域 -->
 	<table class="layui-table" id="sysuser-table" lay-filter="sysuser-table"></table>
 	<script type="text/html" id="barDemo">
-		<a class='layui-btn layui-btn-mini layui-btn-normal' lay-event='edit'>编辑</a>
-		<a class='layui-btn layui-btn-danger layui-btn-mini' lay-event='auth'>赋权</a>
+		<a class='layui-btn layui-btn-xs layui-btn-normal' lay-event='edit'>编辑</a>
+		<a class='layui-btn layui-btn-danger layui-btn-xs' lay-event='auth'>赋权</a>
 	</script>
 	</div>
 </div>
@@ -79,6 +79,20 @@
         //日期范围选择
         laydate.render({elem: '#last-login-time',range: true,type: 'datetime',range: '~'});
         laydate.render({elem: '#create-time',range: true,type: 'datetime',range: '~'});
+
+        //自定义验证规则
+        form.verify({
+            userName: function(value){
+                if( !/^[\S]{5,18}$/.test(value)){
+                    return '用户名不合法(5-18位)';
+                }
+            },
+			password: function (value) {
+                if( !/^[\S]{6,20}$/.test(value)){
+                    return '密码必须6到20s位，且不能出现空格';
+                }
+            }
+        });
         var tableIns = table.render({ //其它参数在此省略
             id: 'sysuser-table',
             elem: '#sysuser-table',
@@ -91,22 +105,22 @@
             cols: [[
                 {checkbox: true, fixed: true}
                 ,{fixed: true,field:'uid', title: 'uid', width:50}
-                ,{field:'name', title: '登录名', width:150}
+                ,{field:'name', title: '登录名', minWidth:100}
                 ,{field:'realName', title: '真实姓名', width:120}
                 ,{field:'mobile', title: '手机号', width:120}
                 ,{field:'qq', title: '联系QQ', width:150}
-                ,{field:'email', title: '邮箱', width:200}
-                ,{field:'createTime', title: '创建时间', width:150,sort:true,templet: '#createTimeTpl'}
-                ,{field:'lastLoginTime', title: '最后登录时间', width:150,sort:true,templet: '#lastLoginTimeTpl'}
-                ,{field:'isValid', title: '是否有效', width:80,templet: '#isValidTpl'}
+                ,{field:'email', title: '邮箱', minWidth:150}
+                ,{field:'createTime', title: '创建时间', width:150,sort:true,templet: '<div>{{dateFormat(d.createTime)}}</div>'}
+                ,{field:'lastLoginTime', title: '最后登录时间', width:150,sort:true,templet: '<div>{{dateFormat(d.lastLoginTime)}}</div>'}
+                ,{field:'isValid', title: '是否有效', width:100,templet: '#isValidTpl'}
                 ,{fixed:'right', title: '操作',width:120, align:'left', toolbar: '#barDemo'}
             ]],
-            height: 'full-200',
+            height: 'full-170',
             size: 'sm',
             even: true,
             page: true,
-            limits: [10,15,30,60,90,150]
-            ,limit: 10  //默认采用15
+            limits: [15,30,60,90,150]
+            ,limit: 15  //默认采用15
         });
         // 编辑 删除
         var $ = layui.$, active = {
@@ -118,65 +132,50 @@
                 dataReload();
             },
             add: function () {
-                layer.full(
-					layer.open({
-						content: $('#add-form'),
-						type: 1,
-						title: '添加系统用户',
-						btn: ['保存', '取消'],
-						maxmin: false,
-						yes: function(index, layero) {
-							var formEm = $(layero).find('form');
-							if (!form.onVerify(formEm)) {
-								return false;
-							}
-							/**表单提交 **/
-							$.post('${ctx}sysuser/add', formEm.serialize(), function (result) {
-								if (result.code == 0) {
-									formEm[0].reset();	//清空弹框表单内容
-									layer.close(index);	//关闭弹框
-									dataReload();
-									return;
-								}
-								layer.msg(result.msg);
-							});
-						}
-					})
-				)
+                common.addForm({
+					content:$('#add-form'),
+					title:"添加系统用户",
+					yes:function (index, layero) {
+                        var formEm = $(layero).find('form');
+                        if (!form.onVerify(formEm)) {
+                            return false;
+                        }
+                        /**表单提交 **/
+                        $.post('${ctx}sysuser/add', formEm.serialize(), function (result) {
+                            if (result.code == 0) {
+                                formEm[0].reset();	//清空弹框表单内容
+                                layer.close(index);	//关闭弹框
+                                dataReload();
+                                return;
+                            }
+                            layer.msg(result.msg);
+                        });
+                    },
+					isFull:true
+				});
             },
             edit: function (data) {
 				data = data || table.checkStatus('sysuser-table').data;
-				console.log(data)
                 if(data.length != 1){
                     layer.msg("请选择一条数据进行编辑！");
                     return;
                 }
-                layer.full(
-                    layer.open({
-                        content: '${ctx}sysuser/editView?uid='+data[0].uid,
-                        type: 2,
-                        title: '修改系统用户',
-                        btn: ['保存', '取消'],
-                        maxmin: false,
-                        yes: function(index, layero) {
-                            var formEm = $(layero).find('iframe').contents().find("#edit-form");
-                            if (!form.onVerify(formEm)) {
-                                return false;
-                            }
-                            /**表单提交 **/
-                            $.post('${ctx}sysuser/edit', formEm.serialize(), function (result) {
-                                if (result.code == 0) {
-                                    formEm[0].reset();	//清空弹框表单内容
-                                    layer.close(index);	//关闭弹框
-//                                    dataReload();
-                                    $(".layui-laypage-btn")[0].click();
-                                    return;
-                                }
-                                layer.msg(result.msg);
-                            });
+                common.editForm('${ctx}sysuser/editView?uid='+data[0].uid,"修改系统用户",400,500,function (index, layero) {
+                    var formEm = $(layero).find('iframe').contents().find("#edit-form");
+                    if (!form.onVerify(formEm)) {
+                        return false;
+                    }
+                    /**表单提交 **/
+                    $.post('${ctx}sysuser/edit', formEm.serialize(), function (result) {
+                        if (result.code == 0) {
+                            formEm[0].reset();	//清空弹框表单内容
+                            layer.close(index);	//关闭弹框
+							dataReload(true);
+                            return;
                         }
-                    })
-				)
+                        layer.msg(result.msg);
+                    });
+                },true);
             },
 			auth: function (data) {
                 var uid = data[0].uid;
@@ -194,17 +193,16 @@
             }
         }
         //加载数据
-        var dataReload = function () {
+        var dataReload = function (isEdit) {
+            if (isEdit) {
+                $(".layui-laypage-btn")[0].click();
+                return;
+			}
             tableIns.reload({
-                where: common.formatForm($('#filterForm'))
+                where: common.formatForm($('#filterForm')),page: {
+                    pageNo: 1 //重新从第 1 页开始
+                }
             });
-        }
-        //编辑
-        var edit = function (id) {
-            if (!id){
-                layer.msg("请选择一条数据进行编辑！")
-            }
-            common.layerShowIframe("getView?id="+id,"修改菜单信息",true)
         }
         //绑定操作按钮
         $('.operator-btn').on('click', function(){
@@ -217,24 +215,6 @@
             active[type] ? active[type].call(this, [obj.data]) : '';
         });
     });
-</script>
-<script type="text/html" id="createTimeTpl">
-	{{# var fn = function(time){
-	var newDate = new Date();
-	newDate.setTime(time);
-	return newDate.Format("yyyy-MM-dd hh:mm:ss");
-	}
-	}}
-	{{fn(d.createTime)}}
-</script>
-<script type="text/html" id="lastLoginTimeTpl">
-	{{# var fn = function(time){
-	var newDate = new Date();
-	newDate.setTime(time);
-	return newDate.Format("yyyy-MM-dd hh:mm:ss");
-	}
-	}}
-	{{fn(d.lastLoginTime)}}
 </script>
 <script type="text/html" id="isValidTpl">
 	{{# if(d.isValid === 0){ }}

@@ -1,0 +1,197 @@
+<#include "../../_layout/_layout2.0.html"><#t>
+	<@header/>
+<div class="childrenBody">
+	<blockquote class="layui-elem-quote news_search">
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input type="text" value="" placeholder="请输入关键字" class="layui-input search_input">
+		    </div>
+		    <a class="layui-btn search_btn">查询</a>
+		</div>
+		<div class="layui-inline">
+			<a class="layui-btn layui-btn-normal usersAdd_btn">当日数据</a>
+		</div>
+		<div class="layui-inline">
+			<a class="layui-btn layui-btn-danger otherAns">与昨天数据对比</a>
+		</div>
+		<div class="layui-inline">
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+	</blockquote>
+	<div style="width: 1000px; height: 450px;margin-left: 50px;margin-top: 25px;" id="echartsMain">
+	  	
+	</div>
+</div>
+<@footer>
+	<script type="text/javascript">
+        layui.use(['form','layer','jquery','laypage','echarts' ],function(){
+            var form = layui.form,
+                layer = parent.layer === undefined ? layui.layer : parent.layer,
+                laypage = layui.laypage, echarts = layui.echarts
+            $ = layui.jquery;
+
+            $(function () {
+                    // 基于准备好的dom，初始化echarts图表
+                    var myChart = echarts.init(document.getElementById('echartsMain'));
+                    $.ajax({
+                        url:"${ctx}guest/getGFByNowDay",
+                        type:"post",
+                        dataType:"json",
+                        success:function(data){
+                            barEchartsOption(myChart,data.body);
+                        },
+                        error:function(XMLHttpRequest, textStatus){
+                            console.log(XMLHttpRequest);  //XMLHttpRequest.responseText    XMLHttpRequest.status   XMLHttpRequest.readyState
+                            console.log(textStatus);
+                            return data.head;
+                        }
+
+                    });
+                    //barEchartsOption(myChart);
+                }
+            );
+
+
+
+            function barEchartsOption(_myChart,_data){
+                var optionBar = {
+                    title : {
+                        text: _data.titleName,
+                        subtext: _data.titleSubtext
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:_data.legend
+                    },
+                    toolbox: {
+                        show : true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar','stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : _data.xAxis
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:_data.legend[0],
+                            type:'bar',
+                            data:_data.seriesString,
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'},
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name: '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                _myChart.clear();	//清除数据
+                _myChart.hideLoading();//隐藏载入
+                _myChart.setOption(optionBar); // 为echarts对象加载数据
+            }
+
+            function lineEchartsOption(_myChart,_data){
+                var optionLine = {
+                    title : {
+                        text: _data.titleName,
+                        subtext: _data.titleSubtext
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:_data.legend
+                    },
+                    toolbox: {
+                        show : true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar','stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [
+                        {
+                            //['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
+                            type : 'category',
+                            boundaryGap : false,
+                            data : _data.xAxis
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            axisLabel : {
+                                formatter: '{value}'
+                            }
+                        }
+                    ],
+                    series : [
+                        {
+                            //[11, 11, 15, 13, 12, 13, 10,11, 11, 15, 13, 12, 13, 10,11, 11, 15, 13, 12, 13, 10,10,10,15]
+                            name:_data.legend[0],
+                            type:_data.data[1].type,
+                            data:_data.data[0].data,
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'},
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            //[1, 2, 2, 5, 3, 2, 0,1, 2, 2, 5, 3, 2, 0,1, 2, 2, 5, 3, 2, 0,1,2,3]
+                            name:_data.legend[1],
+                            type:_data.data[1].type,
+                            data:_data.data[1].data,
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'},
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name : '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                _myChart.clear();	//清除数据
+                _myChart.hideLoading();//隐藏载入
+                _myChart.setOption(optionLine); // 为echarts对象加载数据
+            }
+
+        })
+	</script>
+</@footer>

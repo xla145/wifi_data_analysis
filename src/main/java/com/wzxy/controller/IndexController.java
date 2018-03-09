@@ -27,7 +27,7 @@ public class IndexController {
 
 	@RequestMapping(value = "/index")
 	public String index(HttpServletRequest request, Model model){
-		return "/WEB-INF/view2.0/index";
+		return "index";
 	}
 	
 	@RequestMapping(value = "/main")

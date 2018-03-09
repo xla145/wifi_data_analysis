@@ -2,16 +2,17 @@ package com.wzxy.controller.sysauth;
 
 import cn.assist.easydao.common.Conditions;
 import cn.assist.easydao.common.SqlExpr;
+import cn.assist.easydao.common.SqlJoin;
 import cn.assist.easydao.pojo.PagePojo;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.logistics.base.utils.JsonBean;
-import com.logistics.base.utils.ReqUtils;
-import com.logistics.service.auth.ISysActionService;
-import com.logistics.service.auth.impl.AuthServiceImpl;
-import com.logistics.service.vo.Option;
-import com.logistics.service.vo.sys.SysAction;
-import com.logistics.service.vo.sys.TreeNode;
+import com.wzxy.base.utils.JsonBean;
+import com.wzxy.base.utils.ReqUtils;
+import com.wzxy.service.auth.ISysActionService;
+import com.wzxy.service.auth.impl.AuthServiceImpl;
+import com.wzxy.service.vo.Option;
+import com.wzxy.service.vo.sys.SysAction;
+import com.wzxy.service.vo.sys.TreeNode;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,9 +56,11 @@ public class SysActionsController {
 	public JSONObject data(HttpServletRequest request){
 		//参数获取
 		int pageNo = ReqUtils.getParamToInt(request, "pageNo", 1);
-		int pageSize = ReqUtils.getParamToInt(request, "pageSize", 15);
+		int pageSize = ReqUtils.getParamToInt(request, "pageSize", 2000);
+		int parentId = ReqUtils.getParamToInt(request,"parentId",-1);
 		String name = ReqUtils.getParam(request,"name",null);
 		Conditions conn = new Conditions("name", SqlExpr.EQUAL,name);
+		conn.add(new Conditions("parent_id",SqlExpr.EQUAL,parentId), SqlJoin.AND);
 		PagePojo<SysAction> page = sysActionService.getSysAction(conn, pageNo, pageSize);
 		return JsonBean.success("",page);
 	}

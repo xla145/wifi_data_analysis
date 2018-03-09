@@ -1,5 +1,6 @@
 package com.wzxy.base.log;
 
+import com.wzxy.base.constant.BaseConstant;
 import com.wzxy.base.utils.CommonUtil;
 import com.wzxy.base.utils.ReqUtils;
 import com.wzxy.service.sys.log.ISysOperatorLogService;
@@ -17,8 +18,8 @@ import java.util.Date;
 /**
  * Created by Administrator on 2017/9/25/025.
  */
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class LogInterceptor {
     @Pointcut("execution(* com.wzxy.service.*.*.*(..)) && @annotation(com.wzxy.base.log.Log)")
     private void anyMethod(){}//定义一个切入点

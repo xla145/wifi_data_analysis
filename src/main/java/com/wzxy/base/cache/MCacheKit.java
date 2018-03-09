@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
 
+import com.wzxy.base.constant.BaseConstant;
 import net.rubyeye.xmemcached.MemcachedClient;
 
 import net.rubyeye.xmemcached.exception.MemcachedException;

@@ -8,12 +8,22 @@ body {
 	padding: 8px 10px;
 	font-weight: bold;
 }
+.layui-elem-quote {
+    margin-bottom: 5px;
+    padding: 8px;
+    line-height: 22px;
+    border-left: 5px solid #009688;
+    border-radius: 0 2px 2px 0;
+    background-color: #f2f2f2;
+}
 /**筛选标题*/
 .layui-filtrate-title {
 	margin-left: 5px;
 }
-.layui-elem-quote {
-	padding: 7px;
+#admin-main .layui-table-view {
+    position: relative;
+    margin: 0px 0;
+    overflow: hidden;
 }
 .layui-form-pane .layui-form-label {
 	width: 110px;
@@ -27,6 +37,10 @@ body {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	box-sizing: border-box;
+}
+.layui-form-item {
+    margin-bottom: 6px;
+    clear: both;
 }
 .layui-input, .layui-textarea, .layui-select {
 	height: 35px;
@@ -92,9 +106,6 @@ span.del-img {
 	color: red;
 	font-weight: bold;
 }
-i.layui-icon {
-	font-size: 20px;
-}
 div#img-url {
 	width: 222px;
 }
@@ -128,42 +139,25 @@ i.layui-icon.layui-colla-icon {
 	border-top: 1px solid #e2e2e2;
 	color: #666;
 }
-.layui-tab-content {
-	padding: 0px;
-}
+/*.layui-tab-content {*/
+	/*padding: 0px;*/
+/*}*/
 .layui-form-pane .layui-form-text .layui-textarea {
 	min-height: 75px;
 	border-radius: 0px 0px 2px 2px;
 }
 
-.clear-padding td, .layui-table th{
-    padding: 0px 15px;
-}
-.filter-bar{
-    margin-bottom: 0px;
-    padding: 10px;
-}
-.filter-bar .layui-inline{
-    margin: 5px 0;
-}
-.filter-bar .layui-inline .layui-form-label{
-    padding: 5px;
-    width: auto;
-}
+/*下拉多选*/
+.layui-form-item select[multiple]+.layui-form-select dd{ padding:0;}
+.layui-form-item select[multiple]+.layui-form-select .layui-form-checkbox[lay-skin=primary]{ margin:0 !important; display:block; line-height:36px !important; position:relative; padding-left:26px;}
+.layui-form-item select[multiple]+.layui-form-select .layui-form-checkbox[lay-skin=primary] span{line-height:36px !important; float:none;}
+.layui-form-item select[multiple]+.layui-form-select .layui-form-checkbox[lay-skin=primary] i{ position:absolute; left:10px; top:0; margin-top:9px;}
+.multiSelect{ line-height:normal; height:auto; padding:4px 10px; overflow:hidden;min-height:35px; margin-top:-35px; left:0;}
+.multiSelect a{ padding:2px 5px; background:#908e8e; border-radius:2px; color:#fff; display:block; line-height:20px; height:20px; margin:2px 5px 2px 0; float:left;}
+.multiSelect a span{ float:left;}
+.multiSelect a i{ line-height:17px; font-size:14px !important; float:left; margin:2px 0 0 2px; padding:0 3px; border-radius:2px;}
+.multiSelect a i:hover{ background:#545556;}
 
-.filter-bar .layui-inline .layui-input-inline{
-    margin: 0 0;
-}
-.filter-bar .layui-inline .layui-input-inline .layui-input, .layui-select, .layui-textarea{
-    height: 32px;
-    line-height: 32px;
-}
-.filter-bar .layui-btn .layui-icon {
-    vertical-align: sub;
-}
-.ckb{
-    width: 20px;
-}
 .quote-mini{
     padding: 5px 0 5px 5px;
 }
@@ -238,6 +232,7 @@ i.layui-icon.layui-colla-icon {
     text-overflow: ellipsis;
 }
 .chunk-wrap .chunk .role-item-plain{
+    height: 36px;
     padding: 0 10px;
     text-align: left;
     overflow: hidden;
@@ -266,7 +261,6 @@ i.layui-icon.layui-colla-icon {
     width: 24px;
     font-size: 18px;
 }
-
 .jOrgChart .line {
     height : 20px;
     width : 2px;
@@ -410,4 +404,12 @@ i.layui-icon.layui-colla-icon {
 }
 .layui-table-wrap .fixed-right .layui-table{
     float: right;
+}
+.layui-textarea {
+    height: 26px;
+    line-height: 26px;
+    color: #0C0C0C;
+}
+.childrenContent {
+    margin: 10px;
 }

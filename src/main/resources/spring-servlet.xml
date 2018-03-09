@@ -25,7 +25,7 @@
 	<mvc:annotation-driven />
 	
  	<!-- 事务支持 --> 
-	<tx:annotation-driven transaction-manager="txManager" />
+	<!--<tx:annotation-driven transaction-manager="txManager" />-->
 	
 	<!-- 扫描bean资源 -->
 	<context:component-scan base-package="com.wzxy">
@@ -57,7 +57,35 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="dev" value="${is.dev}" />
 	</bean>
-	
+
+	<bean id="sessionFactory"
+		  class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource"><ref bean="dataSource" /></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+			</props>
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<!-- 可以加多个包 -->
+				<value>com.wzxy.service.model</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		  class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<tx:annotation-driven />
+
 	<!--&lt;!&ndash; cache 配置 &ndash;&gt;-->
 	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
 		<property name="servers">
@@ -72,9 +100,9 @@
 		<constructor-arg type="net.rubyeye.xmemcached.MemcachedClient" ref="memcachedClient"/>
 	</bean>
 	<!---->
-	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    	<property name="dataSource" ref="dataSource" />
-	</bean>
+	<!--<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+    	<!--<property name="dataSource" ref="dataSource" />-->
+	<!--</bean>-->
 	
 	<bean id="springFactory" class="com.wzxy.base.helper.SpringFactory"/>
 	
@@ -84,26 +112,8 @@
 
 	<!-- 引入quartz 配置 	-->
 	<import resource="classpath:spring-quartz.xml"/>
-
-
-	<!-- websocket配置 -->
-	<bean id="SocketMessageHandle" class="com.wzxy.sorket.SocketMessageHandle" />
-	<websocket:handlers>
-		<!-- 配置消息处理bean和路径的映射关系 -->
-		<websocket:mapping path="/hello" handler="SocketMessageHandle"/>
-		<!-- 配置握手拦截器 -->
-		<websocket:handshake-interceptors>
-			<bean class="com.wzxy.filter.TestWebSocketHandleInterceptor"/>
-		</websocket:handshake-interceptors>
-		<!-- 开启sockjs，去掉则关闭sockjs -->
-		<!-- <websocket:sockjs /> -->
-	</websocket:handlers>
-	<!-- 配置websocket消息的最大缓冲区长度 -->
-
-	<bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
-		<property name="maxTextMessageBufferSize" value="8192" />
-		<property name ="maxBinaryMessageBufferSize" value="8192" />
-	</bean>
+	<!-- 引入quartz 配置 	-->
+	<import resource="classpath:redis.xml"/>
 
 
 	<!--设置bean管理器,通过spring的applicationContext获取-->

@@ -117,11 +117,11 @@ layui.define(['element', 'common'], function(exports) {
 			//var content = '<div class="iframe" src="' + data.href + '" data-id="' + globalTabIdIndex + '">'+getHtml(data.href)+'</div>';
 			var content = '<iframe src="' + data.href + '" data-id="' + globalTabIdIndex + '" scrolling="auto"></iframe>';
 			var title = '';
-			if(data.icon !== undefined) {
+			if(data.icon !== undefined && data.icon !== null) {
 				if(data.icon.indexOf('fa-') !== -1) {
 					title += '<i class="fa ' + data.icon + '" aria-hidden="true"></i>';
 				} else {
-					title += '<i class="layui-icon">' + data.icon + '</i>';
+					title += '<i class="layui-icon ' + data.icon + ' "></i>';
 				}
 			}
 			title += '<cite>' + data.title + '</cite>';

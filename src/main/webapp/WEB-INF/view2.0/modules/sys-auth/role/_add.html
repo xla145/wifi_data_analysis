@@ -5,6 +5,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">角色名字</label>
 			<div class="layui-input-inline">
+				<input type="hidden" name="id" class="layui-input" value="${data.id!''}">
 				<input type="text" name="name" placeholder="请输入角色名字" autocomplete="off" class="layui-input" value="${data.name!''}">
 			</div>
 		</div>
@@ -12,12 +13,6 @@
 			<label class="layui-form-label">描述</label>
 			<div class="layui-input-inline">
 				<input type="text" name="describe" placeholder="请输入描述" autocomplete="off" class="layui-input" value="${data.describe!''}">
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-input-block layui-form-save">
-				<button class="layui-btn operator-btn" type="button" data-type="">立即保存</button>
-				<button class="layui-btn operator-btn" type="button">立即保存</button>
 			</div>
 		</div>
 	</form>

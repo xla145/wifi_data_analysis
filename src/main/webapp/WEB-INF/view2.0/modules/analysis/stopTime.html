@@ -1,0 +1,106 @@
+<#include "../../_layout/_layout2.0.html"><#t>
+	<@header/>
+<div class="childrenContent">
+	<blockquote class="layui-elem-quote news_search">
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input type="text" value="" placeholder="请输入关键字" class="layui-input search_input">
+		    </div>
+		    <a class="layui-btn search_btn">查询</a>
+		</div>
+		<div class="layui-inline">
+			<a class="layui-btn layui-btn-normal usersAdd_btn">当日数据</a>
+		</div>
+		<div class="layui-inline">
+			<a class="layui-btn layui-btn-danger otherAns">与昨天数据对比</a>
+		</div>
+		<div class="layui-inline">
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+	</blockquote>
+	<div style="width: 1000px; height: 450px;margin-left: 50px;margin-top: 25px;" id="echartsMain">
+	  	
+	</div>
+	<script type="text/javascript">
+        layui.use(
+            [ 'form', 'layer', 'jquery', 'laypage','echarts' ],
+            function() {
+                var form = layui.form, layer = parent.layer === undefined ? layui.layer
+                    : parent.layer, laypage = layui.laypage, $ = layui.jquery ,echarts = layui.echarts;;
+
+                $(function() {
+                    // 基于准备好的dom，初始化echarts图表
+                    var myChart = echarts.init(document.getElementById('echartsMain'));
+
+                    var optionBar = {
+                        title : {
+                            text: '2017-12-26日驻店时长',
+                            subtext: '2017-12-26日'
+                        },
+                        tooltip : {
+                            trigger : 'item'
+                        },
+                        toolbox : {
+                            show : true,
+                            feature : {
+                                mark : {
+                                    show : true
+                                },
+                                dataZoom : {
+                                    show : true
+                                },
+                                dataView : {
+                                    show : true,
+                                    readOnly : false
+                                },
+                                restore : {
+                                    show : true
+                                },
+                                saveAsImage : {
+                                    show : true
+                                }
+                            }
+                        },
+                        dataRange : {
+                            min : 0,
+                            max : 100,
+                            y : 'center',
+                            text : [ '高', '低' ], // 文本，默认为数值文本
+                            color : [ 'lightgreen', 'yellow' ],
+                            calculable : true
+                        },
+                        xAxis : [ {
+                            type : 'value',
+                            scale : true
+                        } ],
+                        yAxis : [ {
+                            type : 'value',
+                            position : 'right',
+                            scale : true
+                        } ],
+                        animation : false,
+                        series : [ {
+                            name : '个数,时长,平均时长',
+                            type : 'scatter',
+                            symbolSize : 5,
+                            data : (function() {
+                                var d = [];
+                                var len = 500;
+                                var value;
+                                var isAct;
+                                while (len--) {
+                                    value = (Math.random() * 100).toFixed(0) - 0;
+                                    isAct=(Math.random() * 500).toFixed(2) - 0;
+                                    d.push([value,isAct,(isAct/value).toFixed(2)]);
+                                }
+                                return d;
+                            })()
+                        } ]
+                    };
+                    myChart.clear(); // 清除数据
+                    myChart.hideLoading();// 隐藏载入
+                    myChart.setOption(optionBar); // 为echarts对象加载数据
+                });
+            })
+	</script>
+</div>
