@@ -176,6 +176,7 @@ public class SysActionService implements ISysActionService {
 	 * @return
 	 */
 	public PagePojo<SysAction> getSysAction(Conditions conn, int pageNo, int pageSize){
+		conn.add(new Conditions("status",SqlExpr.UNEQUAL,-1),SqlJoin.AND);
 		//查询条件
 		Sort sort = new Sort("weight", SqlSort.ASC);
 		return BaseDao.dao.queryForListPage(SysAction.class, conn, sort, pageNo, pageSize);
@@ -192,6 +193,9 @@ public class SysActionService implements ISysActionService {
 		if (sysAction.getIcon().contains(".")) {
 			sysAction.setIcon(sysAction.getIcon().substring(sysAction.getIcon().indexOf(".")+1,sysAction.getIcon().length()));
 		}
+		if (sysAction.getRemark() == null || StringUtils.isEmpty(sysAction.getRemark())) {
+			sysAction.setRemark("按钮操作");
+		}
 		sysAction.setCreateTime(new Date());
 		sysAction.setUpdateTime(new Date());
 		int i = BaseDao.dao.insert(sysAction);
@@ -207,6 +211,9 @@ public class SysActionService implements ISysActionService {
 	public boolean editSysAction(SysAction sysAction){
 		if (sysAction.getIcon().contains(".")) {
 			sysAction.setIcon(sysAction.getIcon().substring(sysAction.getIcon().indexOf(".")+1,sysAction.getIcon().length()));
+		}
+		if (sysAction.getRemark() == null || StringUtils.isEmpty(sysAction.getRemark())) {
+			sysAction.setRemark("按钮操作");
 		}
 		sysAction.setUpdateTime(new Date());
 		int i = BaseDao.dao.update(sysAction);

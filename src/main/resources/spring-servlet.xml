@@ -113,7 +113,7 @@
 	<!-- 引入quartz 配置 	-->
 	<import resource="classpath:spring-quartz.xml"/>
 	<!-- 引入quartz 配置 	-->
-	<import resource="classpath:redis.xml"/>
+	<!--<import resource="classpath:redis.xml"/>-->
 
 
 	<!--设置bean管理器,通过spring的applicationContext获取-->

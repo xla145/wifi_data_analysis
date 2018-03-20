@@ -21,7 +21,8 @@ public interface ISysRoleService {
 	
 	/**
 	 * 查询角色列表
-	 *
+	 * 
+	 * @param roleId
 	 * @return
 	 */
 	public List<SysRole> getSysRoles();

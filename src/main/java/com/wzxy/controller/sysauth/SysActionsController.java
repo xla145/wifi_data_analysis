@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,14 +55,14 @@ public class SysActionsController {
 	 */
 	@RequestMapping(value = "/list")
 	@ResponseBody
-	public JSONObject data(HttpServletRequest request){
-		//参数获取
+	public JSONObject data(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		int pageNo = ReqUtils.getParamToInt(request, "pageNo", 1);
 		int pageSize = ReqUtils.getParamToInt(request, "pageSize", 2000);
 		int parentId = ReqUtils.getParamToInt(request,"parentId",-1);
 		String name = ReqUtils.getParam(request,"name",null);
 		Conditions conn = new Conditions("name", SqlExpr.EQUAL,name);
 		conn.add(new Conditions("parent_id",SqlExpr.EQUAL,parentId), SqlJoin.AND);
+//		List<TreeNode> list = sysActionService.getActionTrees();
 		PagePojo<SysAction> page = sysActionService.getSysAction(conn, pageNo, pageSize);
 		return JsonBean.success("",page);
 	}
